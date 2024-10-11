@@ -1,0 +1,59 @@
+Attribute VB_Name = "Module1"
+Sub OutputStockQuarterlyData()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim currentRow As Long
+    Dim stock As String
+    Dim quarter As String
+    Dim openingPrice As Double
+    Dim closingPrice As Double
+    Dim volume As Double
+    Dim priceChange As Double
+    Dim percentageChange As Double
+    Dim outputRow As Long
+     
+     ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    
+    ' Find the last row with data
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    
+    ' Prepare to output results
+    outputRow = 1 ' Start at the first row for output
+    ws.Cells(outputRow, 7).Value = "Ticker"
+    ws.Cells(outputRow, 8).Value = "Price Change"
+    ws.Cells(outputRow, 9).Value = "Percentage Change"
+    ws.Cells(outputRow, 10).Value = "Total Volume"
+    outputRow = outputRow + 1 ' Move to the next output row
+    
+    ' Loop through each stock
+    For currentRow = 2 To lastRow ' Assuming headers are in the first row
+        stock = ws.Cells(currentRow, 1).Value
+        quarter = ws.Cells(currentRow, 2).Value
+        openingPrice = ws.Cells(currentRow, 3).Value
+        closingPrice = ws.Cells(currentRow, 4).Value
+        volume = ws.Cells(currentRow, 5).Value
+        
+        ' Calculate the price change and percentage change
+        priceChange = closingPrice - openingPrice
+        If openingPrice <> 0 Then
+            percentageChange = (priceChange / openingPrice) * 100
+        Else
+            percentageChange = 0
+        End If
+        
+        ' Output the data
+        With ws
+            .Cells(outputRow, 7).Value = stock ' Ticker in Column G
+            .Cells(outputRow, 8).Value = priceChange ' Price Change in Column H
+            .Cells(outputRow, 9).Value = Format(percentageChange, "0.00") & "%" ' Percentage Change in Column I
+            .Cells(outputRow, 10).Value = volume ' Total Volume in Column J
+            outputRow = outputRow + 1 ' Move to the next output row
+        End With
+    Next currentRow
+    
+    ' Optional: Autofit the output columns
+    ws.Columns("G:J").AutoFit
+
+End Sub
+
